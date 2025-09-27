@@ -1,4 +1,4 @@
-module github.com/alexxbez/docs
+module github.com/alexxbez/docspt
 
 go 1.25.1
 

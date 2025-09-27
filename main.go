@@ -1,7 +1,7 @@
 package main
 
 import (
-	docs "github.com/alexxbez/docs/cli"
+	docs "github.com/alexxbez/docspt/cli"
 	"os"
 )
 
