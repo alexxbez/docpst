@@ -1,9 +1,10 @@
 package main
 
 import (
-	"fmt"
+	docs "github.com/alexxbez/docs/cli"
+	"os"
 )
 
 func main() {
-	fmt.Println("Hello world")
+	docs.Run(os.Args)
 }
