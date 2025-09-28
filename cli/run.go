@@ -1,27 +1,63 @@
 package cli
 
 import (
+	"context"
 	"fmt"
+	"log"
 	"os"
+
+	"github.com/urfave/cli/v3"
+	c "github.com/urfave/cli/v3"
 )
 
-func Run(argv []string) {
-	if len(argv) == 3 {
-		if argv[1] == "new" {
-			create(argv[2])
-		} else {
-			fmt.Println("Not a valid command")
-			os.Exit(1)
-		}
-	} else if len(argv) == 2 {
-		if argv[1] == "watch" {
-			watch()
-		} else {
-			fmt.Println("Not a valid command")
-			os.Exit(1)
-		}
-	} else {
-		fmt.Println("Usage: docs [command] [arg]")
-		os.Exit(1)
+func Run() {
+	cmd := &c.Command{
+		Name:    "docpst",
+		Version: "v0.1.0",
+		// Authors: []any{
+		// 	&c.Author{
+		// 		Name:  "Alejandro Benitez",
+		// 		Email: "alexxbez@proton.me",
+		// 	},
+		// },
+		Copyright: "(c) 2025 Alejandro Benitez",
+		Usage:     "Manage tyspt documents",
+		UsageText: "docpst <command> [flags] [args]",
+		Commands: []*c.Command{
+			&cli.Command{
+				Name:        "new",
+				Aliases:     []string{"n"},
+				Usage:       "Create a new project",
+				UsageText:   "docpst new NAME",
+				Description: "Creates a new directory NAME the selected or default template.",
+				ArgsUsage:   "NAME",
+				Action: func(ctx context.Context, cmd *c.Command) error {
+					if cmd.Args().Len() != 1 {
+						fmt.Printf("Usage: %v\n", cmd.UsageText)
+						return c.Exit("Incorrect usage", 1)
+					}
+					create(cmd.Args().Get(0))
+					return nil
+				},
+			},
+			&cli.Command{
+				Name:        "watch",
+				Aliases:     []string{"w"},
+				Usage:       "Watches and opens pdf viewer",
+				UsageText:   "docpst watch",
+				Description: "Executes the typst watch command and opens the pdf viewer.",
+				Action: func(ctx context.Context, cmd *c.Command) error {
+					if cmd.Args().Len() != 0 {
+						fmt.Printf("Usage: %v\n", cmd.UsageText)
+						return c.Exit("Incorrect usage", 1)
+					}
+					watch()
+					return nil
+				},
+			},
+		},
+	}
+	if err := cmd.Run(context.Background(), os.Args); err != nil {
+		log.Fatal(err)
 	}
 }
