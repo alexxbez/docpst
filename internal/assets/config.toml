@@ -1,0 +1,13 @@
+version = "0.1.0"
+
+[core]
+viewer = "zathura" # command
+use_zellij = true
+
+[project]
+title = "same"   # same | custom
+author = "Your Name"
+default_template = "default"
+source = "main"  # main | custom
+dest = "same"    # same | custom
+

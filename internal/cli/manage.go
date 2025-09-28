@@ -73,3 +73,11 @@ func watch() {
 
 	fmt.Printf("Finished watching file %v", name)
 }
+
+func setup() {
+	if err := ensureConfigDirIsSetup(); err != nil {
+		fmt.Printf("Error setting up config directory: %v\n", err)
+		os.Exit(1)
+	}
+	println("Config directory successfully set up.")
+}

@@ -55,6 +55,30 @@ func Run() {
 					return nil
 				},
 			},
+			&cli.Command{
+				Name:        "set",
+				Aliases:     []string{"s"},
+				Usage:       "Sets up different settings",
+				UsageText:   "docpst set [ARGS]",
+				Description: "Allows to setup different parts of the configuration.",
+				Commands: []*c.Command{
+					&cli.Command{
+						Name:        "config",
+						Aliases:     []string{"configuration", "conf"},
+						Usage:       "Sets up the configuration directory.",
+						UsageText:   "docpst set config",
+						Description: "Sets up the docpst config file. In UNIX this is $HOME/.config. In Windows this is %AppData%.",
+						Action: func(ctx context.Context, cmd *c.Command) error {
+							if cmd.Args().Len() != 0 {
+								fmt.Printf("Usage: %v\n", cmd.UsageText)
+								return c.Exit("Incorrect usage", 1)
+							}
+							setup()
+							return nil
+						},
+					},
+				},
+			},
 		},
 	}
 	if err := cmd.Run(context.Background(), os.Args); err != nil {
