@@ -6,7 +6,7 @@ import (
 	"os/exec"
 )
 
-func compile_for_first_time(name string) {
+func compileForFirstTime(name string) {
 	if _, err := os.Stat(name + ".pdf"); os.IsNotExist(err) {
 		cmd := exec.Command("typst", "compile", "main.typ")
 		cmd.Stdout = os.Stdout
@@ -18,12 +18,12 @@ func compile_for_first_time(name string) {
 	}
 }
 
-func open_zellij() {
+func openZellij() {
 	exec.Command("zellij", "action", "new-tab", "-n", "main").Run()
 	exec.Command("zellij", "action", "move-tab", "left").Run()
 }
 
-func typst_watch(name string) *exec.Cmd {
+func typstWatch(name string) *exec.Cmd {
 	typst_cmd := exec.Command("typst", "watch", "main.typ", name+".pdf")
 	typst_cmd.Stdout = os.Stdout
 	typst_cmd.Stderr = os.Stderr
@@ -36,7 +36,7 @@ func typst_watch(name string) *exec.Cmd {
 	return typst_cmd
 }
 
-func zathura_open(name string) *exec.Cmd {
+func zathuraOpen(name string) *exec.Cmd {
 	zathura_cmd := exec.Command("zathura", name+".pdf")
 	zathura_cmd.Stdout = os.Stdout
 	zathura_cmd.Stderr = os.Stderr
@@ -49,7 +49,7 @@ func zathura_open(name string) *exec.Cmd {
 	return zathura_cmd
 }
 
-func close_zellij() {
+func closeZellij() {
 	exec.Command("zellij", "action", "close-tab").Run()
 }
 
@@ -60,16 +60,16 @@ func watch() {
 	}
 
 	name := "main"
-	compile_for_first_time(name)
-	open_zellij()
-	var zathura_cmd *exec.Cmd = zathura_open(name)
-	var typst_cmd *exec.Cmd = typst_watch(name)
+	compileForFirstTime(name)
+	openZellij()
+	var zathura_cmd *exec.Cmd = zathuraOpen(name)
+	var typst_cmd *exec.Cmd = typstWatch(name)
 
 	zathura_cmd.Wait()
 	typst_cmd.Process.Kill()
 	typst_cmd.Wait()
 
-	close_zellij()
+	closeZellij()
 
 	fmt.Printf("Finished watching file %v", name)
 }

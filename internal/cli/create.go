@@ -2,13 +2,13 @@ package cli
 
 import (
 	"fmt"
-	cp "github.com/otiai10/copy"
-	// "io"
 	"os"
 	"path/filepath"
+
+	cp "github.com/otiai10/copy"
 )
 
-func create_directory(name string) {
+func createDirectory(name string) {
 	err := os.MkdirAll(name, 0755)
 	if err != nil {
 		fmt.Printf("Couldn't create directory %v: %v\n", name, err)
@@ -16,7 +16,7 @@ func create_directory(name string) {
 	}
 }
 
-func copy_template(name string) {
+func copyTemplate(name string) {
 	template_dir := "/home/alexx/bin/docs/" // temporal
 	template_source := filepath.Join(template_dir, "template.typ")
 	img_source := filepath.Join(template_dir, "img")
@@ -34,7 +34,7 @@ func copy_template(name string) {
 }
 
 func create(name string) {
-	create_directory(name)
-	copy_template(name)
+	createDirectory(name)
+	copyTemplate(name)
 	fmt.Printf("Document %v created\n", name)
 }
