@@ -55,19 +55,51 @@ func setupConfigDir(configDirPath string) error {
 
 	templatesPath := path.Join(configDirPath, "templates")
 	if err := os.MkdirAll(templatesPath, 0755); err != nil {
+		if clean_err := cleanUpConfigDir(configDirPath); clean_err != nil {
+			return fmt.Errorf("Unable to create templates directory: %v\nUnable to clean configuration directory: %v", err, clean_err)
+		}
 		return fmt.Errorf("Unable to create templates directory: %v", err)
 	}
 
-	defaultTemplateName := "default.typ"
-	if err := copyEmbeddedFile(assets.Assets, defaultTemplateName, path.Join(templatesPath, defaultTemplateName)); err != nil {
-		return err
+	defaultTemplatePath := path.Join(templatesPath, "default")
+	if err := os.MkdirAll(defaultTemplatePath, 0755); err != nil {
+		if clean_err := cleanUpConfigDir(configDirPath); clean_err != nil {
+			return fmt.Errorf("Unable to create default template directory: %v\nUnable to clean configuration directory: %v", err, clean_err)
+		}
+		return fmt.Errorf("Unable to create default template directory: %v", err)
+	}
+
+	defaultTemplateName := "template.typ"
+	if err := copyEmbeddedFile(assets.Assets, defaultTemplateName, path.Join(defaultTemplatePath, defaultTemplateName)); err != nil {
+		if clean_err := cleanUpConfigDir(configDirPath); clean_err != nil {
+			return fmt.Errorf("Unable to create default template: %v\nUnable to clean configuration directory: %v", err, clean_err)
+		}
+		return fmt.Errorf("Unable to create default template: %v", err)
+	}
+
+	defaultDocsName := "main.typ"
+	if err := copyEmbeddedFile(assets.Assets, defaultDocsName, path.Join(defaultTemplatePath, defaultDocsName)); err != nil {
+		if clean_err := cleanUpConfigDir(configDirPath); clean_err != nil {
+			return fmt.Errorf("Unable to create default template: %v\nUnable to clean configuration directory: %v", err, clean_err)
+		}
+		return fmt.Errorf("Unable to create default template: %v", err)
 	}
 
 	tomlConfigName := "config.toml"
 	if err := copyEmbeddedFile(assets.Assets, tomlConfigName, path.Join(configDirPath, tomlConfigName)); err != nil {
-		return err
+		if clean_err := cleanUpConfigDir(configDirPath); clean_err != nil {
+			return fmt.Errorf("Unable to create toml configuration file: %v\nUnable to clean configuration directory: %v", err, clean_err)
+		}
+		return fmt.Errorf("Unable to create toml configuration file: %v", err)
 	}
 
+	return nil
+}
+
+func cleanUpConfigDir(configDirPath string) error {
+	if err := os.RemoveAll(configDirPath); err != nil {
+		return fmt.Errorf("Unable to clean up configuration directory: %v", err)
+	}
 	return nil
 }
 

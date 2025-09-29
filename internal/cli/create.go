@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"path"
-	"path/filepath"
 
 	"github.com/BurntSushi/toml"
 	cp "github.com/otiai10/copy"
@@ -17,16 +16,30 @@ func createDirectory(name string) error {
 	return nil
 }
 
-func copyTemplate(name string) error {
+func copyTemplate(name string, template string) error {
 	configDirPath, err := getConfigDirPath()
 	if err != nil {
 		return fmt.Errorf("Not able to access config: %v", err)
 	}
-	template := "default.typ" // NOTE: Change this later
-	templateSource := filepath.Join(configDirPath, "templates", template)
 
-	if err := cp.Copy(templateSource, name+"/main.typ"); err != nil {
-		return fmt.Errorf("Unable to copy template %v: %v", template, err)
+	templateDirPath := path.Join(configDirPath, "templates", template)
+	templateDir, err := os.Open(templateDirPath)
+	if err != nil {
+		return fmt.Errorf("Unable to access template directory: %v", err)
+	}
+	defer templateDir.Close()
+
+	var files []string
+	files, err = templateDir.Readdirnames(0)
+	if err != nil {
+		return fmt.Errorf("Error reading templates: %v", err)
+	}
+
+	for _, file := range files {
+		filePath := path.Join(templateDirPath, file)
+		if err := cp.Copy(filePath, name); err != nil {
+			return fmt.Errorf("Error copying templates: %v", err)
+		}
 	}
 
 	return nil
@@ -69,16 +82,18 @@ func create(name string) {
 		os.Exit(1)
 	}
 
-	_, err := createToml(name)
+	config, err := createToml(name)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 
-	if err := copyTemplate(name); err != nil {
+	if err := copyTemplate(name, config.defaultTemplate); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 
 	fmt.Printf("Document %v successfully created\n", name)
 }
+
+// func abortCreation
