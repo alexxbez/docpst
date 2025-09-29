@@ -37,7 +37,8 @@ func copyTemplate(name string, template string) error {
 
 	for _, file := range files {
 		filePath := path.Join(templateDirPath, file)
-		if err := cp.Copy(filePath, name); err != nil {
+		if err := cp.Copy(filePath, path.Join(name, file)); err != nil {
+			fmt.Println(file, filePath)
 			return fmt.Errorf("Error copying templates: %v", err)
 		}
 	}
@@ -71,7 +72,7 @@ func createToml(name string) (ProjectConfig, error) {
 	return config, nil
 }
 
-func create(name string) {
+func createWithDefaultTemplate(name string) {
 	if err := ensureConfigDirIsSetup(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -88,7 +89,7 @@ func create(name string) {
 		os.Exit(1)
 	}
 
-	if err := copyTemplate(name, config.defaultTemplate); err != nil {
+	if err := copyTemplate(name, config.DefaultTemplate); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
@@ -96,4 +97,29 @@ func create(name string) {
 	fmt.Printf("Document %v successfully created\n", name)
 }
 
-// func abortCreation
+func createWithCustomTemplate(name string, template string) {
+	if err := ensureConfigDirIsSetup(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	if err := createDirectory(name); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	_, err := createToml(name)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	if err := copyTemplate(name, template); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	fmt.Printf("Document %v successfully created with template %v\n", name, template)
+}
+
+// TODO: func abortCreation | to test try removing file from a copy

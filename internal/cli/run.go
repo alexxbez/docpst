@@ -31,12 +31,24 @@ func Run() {
 				UsageText:   "docpst new NAME",
 				Description: "Creates a new directory NAME the selected or default template.",
 				ArgsUsage:   "NAME",
+				Flags: []c.Flag{
+					&c.StringFlag{
+						Name:    "template",
+						Value:   "",
+						Usage:   "Override the template used.",
+						Aliases: []string{"t"},
+					},
+				},
 				Action: func(ctx context.Context, cmd *c.Command) error {
 					if cmd.Args().Len() != 1 {
 						fmt.Printf("Usage: %v\n", cmd.UsageText)
 						return c.Exit("Incorrect usage", 1)
 					}
-					create(cmd.Args().Get(0))
+					if cmd.String("template") == "" {
+						createWithDefaultTemplate(cmd.Args().Get(0))
+					} else {
+						createWithCustomTemplate(cmd.Args().Get(0), cmd.String("template"))
+					}
 					return nil
 				},
 			},

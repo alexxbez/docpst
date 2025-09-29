@@ -14,7 +14,7 @@ import (
 type ProjectConfig struct {
 	Title           string `toml:"title"`
 	Author          string `toml:"author"`
-	defaultTemplate string `toml:"dafult_template"`
+	DefaultTemplate string `toml:"default_template"`
 	Source          string `toml:"source"`
 	Dest            string `toml:"dest"`
 }
